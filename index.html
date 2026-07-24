@@ -97,8 +97,16 @@
   #mission .sec-head h2{color:#fff}
   #mission .sec-head .eyebrow{color:var(--pink-soft)}
   #mission .sec-head p{color:rgba(255,255,255,.72)}
-  .mission-lead{max-width:600px;margin:0 auto 30px;text-align:center;font-size:14.5px;line-height:2.1;color:rgba(255,255,255,.86)}
+  .mission-lead{max-width:600px;margin:0 auto 24px;text-align:center;font-size:14.5px;line-height:2.1;color:rgba(255,255,255,.86)}
   .mission-lead b{color:var(--pink-soft);font-weight:700}
+  .manifesto{max-width:600px;margin:0 auto 32px;background:linear-gradient(135deg,rgba(91,150,201,.14),rgba(224,121,158,.14));border:1px solid rgba(255,255,255,.18);border-radius:20px;padding:26px 24px;text-align:center}
+  .manifesto .eyebrow{color:var(--blue-soft);display:block;margin-bottom:14px}
+  .manifesto h3{font-family:var(--serif);font-weight:800;font-size:clamp(20px,4.8vw,26px);color:#fff;letter-spacing:.04em;line-height:1.5;margin-bottom:14px}
+  .manifesto h3 em{font-style:normal;color:var(--pink-soft)}
+  .manifesto p{font-size:13.5px;line-height:2;color:rgba(255,255,255,.82)}
+  .manifesto p b{color:#fff;font-weight:700}
+  .mcard .aihint{margin-top:12px;font-size:11.5px;line-height:1.7;color:var(--blue-soft);display:flex;gap:7px;align-items:flex-start}
+  .mcard .aihint svg{flex:0 0 auto;width:15px;height:15px;margin-top:2px}
   .mcards{display:grid;gap:16px}
   .mcard{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:22px 20px;transition:.25s}
   .mcard .head{display:flex;gap:16px;align-items:flex-start}
@@ -251,9 +259,16 @@
   .chip:active{transform:scale(.97)}
   .chip.on{background:var(--pink);border-color:var(--pink);color:#fff;box-shadow:0 8px 18px -10px rgba(224,121,158,.8)}
   .chip.ch.on{background:var(--blue);border-color:var(--blue)}
-  .sheet textarea{width:100%;font-family:var(--sans);font-size:15px;line-height:1.8;border:1.5px solid var(--line);border-radius:14px;padding:14px;color:var(--ink);background:#fff;resize:none;min-height:82px}
+  .sheet textarea{width:100%;font-family:var(--sans);font-size:15px;line-height:1.9;border:1.5px solid var(--line);border-radius:14px;padding:16px;color:var(--ink);background:#fff;resize:vertical;min-height:150px}
   .sheet textarea:focus{outline:none;border-color:var(--blue-soft)}
-  .sheet .s-hint{font-size:11px;color:var(--ink-3);margin-top:6px}
+  .sheet .s-hint{font-size:11.5px;color:var(--ink-3);margin-top:8px;line-height:1.7}
+  .ai-deepen{margin-top:16px;width:100%;display:flex;align-items:center;gap:12px;text-align:left;background:linear-gradient(135deg,var(--blue-tint),var(--pink-tint));border:1px solid var(--blue-soft);border-radius:16px;padding:15px 16px;cursor:pointer;transition:.2s;font-family:var(--sans)}
+  .ai-deepen:active{transform:scale(.99)}
+  .ai-deepen .ai-ic{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,var(--blue),var(--pink));color:#fff;display:flex;align-items:center;justify-content:center}
+  .ai-deepen .ai-ic svg{width:20px;height:20px}
+  .ai-deepen .ai-tx b{display:block;font-size:13.5px;font-weight:700;color:var(--navy);letter-spacing:.02em}
+  .ai-deepen .ai-tx span{font-size:11.5px;color:var(--ink-2);line-height:1.6}
+  .ai-deepen[disabled]{opacity:.5;cursor:default}
   .sheet .s-submit{margin-top:22px;width:100%;font-family:var(--sans);font-weight:700;font-size:15.5px;color:#fff;background:linear-gradient(135deg,var(--pink),var(--blue));border:none;border-radius:100px;padding:16px;cursor:pointer;transition:.2s}
   .sheet .s-submit:disabled{opacity:.45}
   .sheet .s-submit:active:not(:disabled){transform:scale(.98)}
@@ -339,11 +354,11 @@
         <p>気負わないで大丈夫。この5つだけ、頭の片隅に置いておいてください。</p>
       </div>
       <div class="rules">
-        <div class="rule"><span class="rn">1</span><p>スマホは片手でどうぞ。ミッションは、ぜんぶ1分で終わります。</p></div>
-        <div class="rule"><span class="rn">2</span><p>正解はありません。あなたが感じたことが、そのまま答えです。</p></div>
-        <div class="rule"><span class="rn">3</span><p>気づいたら、その場でひとことだけ。あとでまとめなくて大丈夫。</p></div>
-        <div class="rule"><span class="rn">4</span><p>誰かのアウトプットに出会ったら、スタンプでそっと反応してみてくださいね。</p></div>
-        <div class="rule"><span class="rn">5</span><p>いちばん大事なのは、味わうこと。学びは、あとから自然についてきます。</p></div>
+        <div class="rule"><span class="rn">1</span><p>正解はありません。あなたが感じたことが、そのまま答えです。</p></div>
+        <div class="rule"><span class="rn">2</span><p>まず、自分の頭で「なぜ？」を考える。答えを最初からAIに聞かないでくださいね。</p></div>
+        <div class="rule"><span class="rn">3</span><p>感じたことは、ひとことで済ませず“ぜんぶ”ことばにする。それが、いちばんの仕入れです。</p></div>
+        <div class="rule"><span class="rn">4</span><p>書いた気づきは、AIwith壁打ちして発想を広げる。<b style="color:var(--pink-deep)">AIに使われず、AIを使う</b>。</p></div>
+        <div class="rule"><span class="rn">5</span><p>誰かのウォールに出会ったら、スタンプでそっと反応を。いちばん大事なのは、味わうことです。</p></div>
       </div>
     </div>
   </section>
@@ -352,10 +367,17 @@
     <div class="wrap">
       <div class="sec-head">
         <span class="eyebrow">Your Mission</span>
-        <h2 class="serif">5つの、たったひとつの問い。</h2>
-        <p>各スポットで“1分だけ”立ち止まって、感じたことをタップするだけ。歩きながら・食べながらでOKです。</p>
+        <h2 class="serif">街で“考える”。<br>AIで、もっと遠くまで。</h2>
+        <p>各スポットで立ち止まって、感じたことを“ぜんぶ”ことばにする。それが、いちばんの仕入れです。</p>
       </div>
       <p class="mission-lead">テーマは<b>「なぜ、売れるんだろう？」</b>。<br>街に散らばった“選ばれる理由”を、あなたの目で見つけてください。</p>
+
+      <div class="manifesto">
+        <span class="eyebrow">Mindset</span>
+        <h3 class="serif">AIに、使われない。<br><em>AIを、使う。</em></h3>
+        <p>「なぜ売れる？」を考えるのは、あなたの脳です。<br>まず自分の頭で感じて、<b>思ったことを全部メモする</b>。<br>そのメモを<b>AIwith壁打ち</b>して、発想をもっと遠くまで広げる。<br>——大事なのは“答え”じゃなくて、<b>“考える力”</b>です。</p>
+      </div>
+
       <div class="mcards" id="mcards"><!-- injected --></div>
 
       <div class="challenge">
@@ -506,9 +528,13 @@
   <div class="chips" id="shFeel"></div>
   <div class="s-lb" id="shChoiceLb">あなたの選択は？<span>任意</span></div>
   <div class="chips ch" id="shChoice"></div>
-  <div class="s-lb">ひとことメモ<span>任意・声でもOK</span></div>
-  <textarea id="shBody" placeholder="小さな発見でOKです。書かなくても大丈夫☺️"></textarea>
-  <div class="s-hint">※「気持ち」だけでも投稿できます。空でもOK。</div>
+  <div class="s-lb">思ったこと、ぜんぶ書く<span>ここが、いちばん大事</span></div>
+  <textarea id="shBody" placeholder=""></textarea>
+  <div class="s-hint">なぜそう感じたか、どこを見てそう思ったか——まで書けると、あとで宝物になります。声入力でもOK。</div>
+  <button class="ai-deepen" id="shAi" onclick="deepenWithAI()" disabled>
+    <span class="ai-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8.8-2.2z"/></svg></span>
+    <span class="ai-tx"><b>この気づきを、AIで深める</b><span>あなたのメモ＋問いをコピー。ChatGPTやClaudeに貼るだけ</span></span>
+  </button>
   <button class="s-submit" id="shSubmit" onclick="submitNote()" disabled>ウォールに貼る</button>
 </div>
 
@@ -532,23 +558,33 @@ const MISSIONS=[
  {id:'m1',no:'01',spot:'サッポロビール博物館 · Day1',title:'時間が、値段になる瞬間。',
   q:'100年前のポスターや古い樽に、なぜ人は価値を感じるんだと思いますか？',
   choices:['物語があるから','希少だから','職人の手仕事','懐かしさ'],
-  why:'リユースの値付けも「年式・背景の物語」が根拠になる。ブランドが“時間”を売っているのを、体で確かめる。'},
+  why:'リユースの値付けも「年式・背景の物語」が根拠になる。ブランドが“時間”を売っているのを、体で確かめる。',
+  ph:'例）ただ古いだけじゃなくて、そこに「物語」があるから欲しくなる気がした。私はここで、こう感じた——（なぜそう思ったのか、どこを見てそう感じたのか、思ったことを全部書いてください）',
+  ai:'私は「古いもの・時間」に人が価値を感じる理由を、こう考えました。この“時間の価値”を、私のリユース商品の出品説明にどう活かせますか？私が見落としている角度も5つ、辛口で挙げて、私の考えをもっと深めてください。'},
  {id:'m2',no:'02',spot:'ジンギスカン懇親会 · Day1',title:'誰かの“欲しい”を、ひとつ拾う。',
   q:'目の前の人が、今日いちばん前のめりになった瞬間はいつでしたか？',
   choices:['食べ物の話','将来の夢','買い物の話','家族の話'],
-  why:'需要は言葉より“表情”に出る。人の熱が動く瞬間を観察する目が、刺さる出品文の源になる。'},
+  why:'需要は言葉より“表情”に出る。人の熱が動く瞬間を観察する目が、刺さる出品文の源になる。',
+  ph:'例）〇〇の話になった瞬間、みんなの目の色が変わった。なぜあの話に熱が動いたんだろう——（誰の、どんな瞬間だったか。なぜ前のめりになったと思うか、全部書いてください）',
+  ai:'私は「人が“欲しい・前のめり”になる瞬間」を、今日こう観察しました。この“熱が動く瞬間”を、メルカリの商品写真やタイトル・説明文でどう再現できますか？私の観察をもとに、具体案を一緒に考えてください。'},
  {id:'m3',no:'03',spot:'大通 定番さんぽ · Day2',title:'“撮りたくなった”が、答え。',
   q:'テレビ塔・時計台・赤れんが。思わず写真を撮りたくなったのはどれ？それはなぜ？',
   choices:['テレビ塔','時計台','赤れんが庁舎'],
-  why:'撮りたい＝シェアしたい＝選ばれる。商品写真で“選ばれる画角”を探す目に直結する。'},
+  why:'撮りたい＝シェアしたい＝選ばれる。商品写真で“選ばれる画角”を探す目に直結する。',
+  ph:'例）〇〇を撮りたくなったのは、〇〇だから。私が「撮りたい」と思った理由は——（何に惹かれたのか、どの角度・光・構図だったか、思ったことを全部書いてください）',
+  ai:'私は「撮りたくなる＝選ばれる」について、今日こう感じました。私の出品写真が“思わず撮りたくなる／欲しくなる”ように変えるには？プロのカメラマンと編集者の視点で、私の気づきを踏まえた改善案を出してください。'},
  {id:'m4',no:'04',spot:'鮨匠 なつめ · Day2',title:'あなたが、その一段を選んだ理由。',
   q:'松2,530／竹3,630／梅4,400…どの一段を選びましたか？隣との差額は、何円分の“納得”でしたか？',
   choices:['いちばん上','まん中','いちばん手前'],
-  why:'人が“まん中”を選ぶ松竹梅効果を、自分の財布で体感。3段階価格の設計＝値付けの心理そのもの。'},
+  why:'人が“まん中”を選ぶ松竹梅効果を、自分の財布で体感。3段階価格の設計＝値付けの心理そのもの。',
+  ph:'例）私は〇〇を選んだ。上との差額〇〇円は、私の中で〇〇分の納得だった——（なぜその段にしたのか、何と比べて決めたのか、心の動きを全部書いてください）',
+  ai:'私は「松竹梅で人が真ん中を選ぶ理由」を、自分の財布で体感してこう考えました。私の商品ラインナップに3段階の価格を作るなら、どう設計すれば“真ん中”に手が伸びますか？私の気づきを踏まえて深めてください。'},
  {id:'m5',no:'05',spot:'ビアガーデン講座 · Day2',title:'森川・清水の“目”を、借りる。',
   q:'二人が「これは売れる」と言った視点を、あなたならどう言い換えますか？',
   choices:['見せ方','ことば','タイミング','人の気持ち'],
-  why:'他人の思考は、自分の言葉に変換した瞬間に“自分のもの”になる。'}
+  why:'他人の思考は、自分の言葉に変換した瞬間に“自分のもの”になる。',
+  ph:'例）二人が言っていた〇〇という視点を、私の言葉にすると〇〇。今日いちばん自分に刺さったのは——（どんな視点だったか、自分ならどう言い換えるか、全部書いてください）',
+  ai:'森川・清水が「これは売れる」と言った視点を、私はこう自分の言葉に言い換えました。この考え方を、もっと自分のビジネスに落とし込みたいです。私に問いを投げ返しながら、思考をさらに広げる手伝いをしてください。'}
 ];
 const FEELINGS=['ときめいた ♡','なるほど','売れそう','おいしい','ひらめいた'];
 const REACTS=[['heart','わかる'],['clap','いいね'],['smile','すてき'],['idea','まねしたい']];
@@ -622,6 +658,7 @@ function renderMissions(){
       </div>
       <p class="q">${esc(m.q)}</p>
       <p class="why">${esc(m.why)}</p>
+      <p class="aihint"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6L12 3z"/></svg><span>まず自分の頭で考えて全部メモ → AIwith壁打ちで発想を広げる</span></p>
       <div class="foot">
         <button class="write ${isDone?'done':''}" onclick="openSheet('${m.id}')">${isDone?'もう一度書く':'その場で書く'}</button>
         <span class="cnt" onclick="showView('wall');setWallFilter('${m.id}')">みんなの声 <b>${c}</b></span>
@@ -638,7 +675,8 @@ function openSheet(mid){
   document.getElementById('shQ').textContent=curMission.q;
   document.getElementById('shFeel').innerHTML=FEELINGS.map(f=>`<span class="chip" onclick="pickFeel(this,'${esc(f)}')">${esc(f)}</span>`).join('');
   document.getElementById('shChoice').innerHTML=curMission.choices.map(c=>`<span class="chip ch" onclick="pickChoice(this,'${esc(c)}')">${esc(c)}</span>`).join('');
-  document.getElementById('shBody').value='';
+  const body=document.getElementById('shBody');
+  body.value=''; body.placeholder=curMission.ph||'思ったことを、ぜんぶ書いてください。';
   refreshSubmit();
   document.getElementById('sheetBg').classList.add('show');
   document.getElementById('sheet').classList.add('show');
@@ -646,13 +684,27 @@ function openSheet(mid){
 function closeSheet(){document.getElementById('sheetBg').classList.remove('show');document.getElementById('sheet').classList.remove('show');}
 function pickFeel(el,f){document.querySelectorAll('#shFeel .chip').forEach(c=>c.classList.remove('on'));el.classList.add('on');curFeel=f;refreshSubmit();}
 function pickChoice(el,c){const on=el.classList.contains('on');document.querySelectorAll('#shChoice .chip').forEach(x=>x.classList.remove('on'));if(!on){el.classList.add('on');curChoice=c;}else{curChoice=null;}}
-function refreshSubmit(){document.getElementById('shSubmit').disabled=!curFeel;}
+function refreshSubmit(){
+  const body=document.getElementById('shBody').value.trim();
+  document.getElementById('shSubmit').disabled=!(curFeel&&body.length>0);
+  document.getElementById('shAi').disabled=!(body.length>0);
+}
+function fallbackCopy(t,cb){const ta=document.createElement('textarea');ta.value=t;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}document.body.removeChild(ta);cb&&cb();}
+function deepenWithAI(){
+  const body=document.getElementById('shBody').value.trim();
+  if(!body){toast('先に、思ったことを書いてみてね');return;}
+  const m=curMission, spot=m.spot.split(' · ')[0], feel=curFeel?curFeel.replace(' ♡',''):'';
+  const prompt=`【北海道スタディトリップ／${spot}】\nテーマ：${m.title}\n問い：${m.q}\n\n私が街で感じたこと${feel?('（気持ち：'+feel+'）'):''}：\n${body}\n\n${m.ai}`;
+  const done=()=>toast('コピーしました。ChatGPTやClaudeに貼って、発想を広げてみて');
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(prompt).then(done).catch(()=>fallbackCopy(prompt,done));}
+  else fallbackCopy(prompt,done);
+}
 
 async function submitNote(){
   if(!curFeel)return;
   const btn=document.getElementById('shSubmit');btn.disabled=true;btn.textContent='貼っています…';
   const note={id:uuid(),device_id:ME.id,display_name:ME.name,mission_id:curMission.id,
-    feeling:curFeel,choice:curChoice,body:document.getElementById('shBody').value.trim().slice(0,280),created_at:new Date().toISOString()};
+    feeling:curFeel,choice:curChoice,body:document.getElementById('shBody').value.trim().slice(0,4000),created_at:new Date().toISOString()};
   // local first (never lose)
   const mine=myNotesLocal();mine.unshift(note);saveMyNotesLocal(mine);
   NOTES.unshift(note);
@@ -688,6 +740,10 @@ async function loadWall(){
     WALL_READY=true;
     if(queueLocal().length)syncQueue();
     const remote=await r.json();
+    // recover my own memos from server (in case local storage was lost)
+    const localMine=myNotesLocal(); const localIds=new Set(localMine.map(n=>n.id));
+    const serverMine=remote.filter(n=>n.device_id===ME.id&&!localIds.has(n.id));
+    if(serverMine.length){saveMyNotesLocal([...serverMine,...localMine].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)));renderMe();}
     // merge local-only notes not yet on server
     const ids=new Set(remote.map(n=>n.id));
     const localExtra=myNotesLocal().filter(n=>!ids.has(n.id));
@@ -772,7 +828,7 @@ function renderAll(){renderMissions();renderMe();}
 
 /* =================== INIT =================== */
 document.getElementById('nameInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')startApp();});
-document.getElementById('shBody')?.addEventListener('input',()=>{});
+document.getElementById('shBody')?.addEventListener('input',refreshSubmit);
 bootIdentity();
 renderMissions(); renderWallFilter();
 if(ME.name){renderAll();loadWall();syncQueue();}
