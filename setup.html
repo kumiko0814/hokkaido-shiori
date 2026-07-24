@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>共有ウォール セットアップ｜Merone 北海道</title>
+<style>
+  :root{--pink:#e0799e;--blue:#5b96c9;--navy:#2e3448;--cream:#fbf8f4;--ink:#2e3038;--ink2:#636776;--line:#e7e2e5;--ok:#3f9d6d;--warn:#c98a2e}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Noto Sans JP",system-ui,sans-serif;background:var(--cream);color:var(--ink);line-height:1.9;padding:28px 18px;max-width:680px;margin:0 auto}
+  h1{font-size:20px;color:var(--navy);margin-bottom:6px;letter-spacing:.03em}
+  .lead{color:var(--ink2);font-size:13.5px;margin-bottom:22px}
+  .step{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px;box-shadow:0 8px 24px -18px rgba(46,52,72,.4)}
+  .step h2{font-size:15px;color:var(--navy);margin-bottom:10px}
+  .num{display:inline-flex;width:24px;height:24px;border-radius:7px;background:var(--pink);color:#fff;font-weight:700;font-size:13px;align-items:center;justify-content:center;margin-right:8px}
+  ol{margin:8px 0 0 20px;font-size:13px;color:var(--ink2)}
+  ol li{margin-bottom:6px}
+  a{color:var(--blue)}
+  pre{background:var(--navy);color:#eaf1f8;border-radius:12px;padding:16px;font-size:11.5px;line-height:1.7;overflow-x:auto;margin-top:12px;font-family:ui-monospace,Menlo,monospace}
+  button{font-family:inherit;font-weight:700;font-size:14px;border:none;border-radius:100px;padding:13px 22px;cursor:pointer;transition:.2s}
+  .btn-copy{background:var(--blue);color:#fff;margin-top:12px}
+  .btn-test{background:var(--navy);color:#fff;width:100%;margin-top:6px}
+  .btn-test:disabled{opacity:.5}
+  .result{margin-top:14px;border-radius:12px;padding:14px 16px;font-size:13px;display:none}
+  .result.show{display:block}
+  .result.ok{background:#eaf6ef;color:var(--ok);border:1px solid #bfe3cf}
+  .result.err{background:#fdeef1;color:#c0506e;border:1px solid #f4c9d5}
+  .result b{display:block;margin-bottom:4px;font-size:13.5px}
+  .who{background:#fff7ee;border:1px solid #f0dcbf;border-radius:12px;padding:12px 14px;font-size:12.5px;color:#8a6a2e;margin-bottom:22px}
+</style>
+</head>
+<body>
+  <h1>みんなのウォール セットアップ</h1>
+  <p class="lead">この作業は<b>1回だけ</b>。共有ウォール（みんなの投稿が見える機能）を有効にします。<br>所要 約1分。個人ノートはこの作業なしでも使えます。</p>
+
+  <div class="who">📱 <b>だれがやる？</b> くみこ or 本田さん。Supabaseにログインできる人ならだれでもOKです。</div>
+
+  <div class="step">
+    <h2><span class="num">1</span>Supabase を開く</h2>
+    <ol>
+      <li><a href="https://supabase.com/dashboard/project/inrvprlyobghviklulcv/sql/new" target="_blank" rel="noopener">この SQL エディタを開く →</a>（Re:alizeと同じプロジェクト）</li>
+      <li>ログインを求められたら、いつものアカウントで入る</li>
+    </ol>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">2</span>下の呪文をコピーして貼り付け → RUN</h2>
+    <p style="font-size:12.5px;color:var(--ink2)">「Copy」を押してSQLエディタに貼り、右下の <b>RUN</b>（またはCmd+Enter）を押すだけ。</p>
+    <pre id="sql">-- Merone 北海道 STUDY TRIP : 共有ウォール
+create table if not exists hokkaido_notes (
+  id uuid primary key default gen_random_uuid(),
+  device_id text not null,
+  display_name text not null,
+  mission_id text not null,
+  choice text,
+  feeling text,
+  body text,
+  created_at timestamptz default now()
+);
+create table if not exists hokkaido_reactions (
+  id uuid primary key default gen_random_uuid(),
+  note_id uuid not null references hokkaido_notes(id) on delete cascade,
+  device_id text not null,
+  emoji text not null,
+  created_at timestamptz default now(),
+  unique (note_id, device_id, emoji)
+);
+alter table hokkaido_notes enable row level security;
+alter table hokkaido_reactions enable row level security;
+create policy "n_sel" on hokkaido_notes for select to anon using (true);
+create policy "n_ins" on hokkaido_notes for insert to anon with check (true);
+create policy "n_del" on hokkaido_notes for delete to anon using (true);
+create policy "r_sel" on hokkaido_reactions for select to anon using (true);
+create policy "r_ins" on hokkaido_reactions for insert to anon with check (true);
+create policy "r_del" on hokkaido_reactions for delete to anon using (true);</pre>
+    <button class="btn-copy" onclick="copySql()">SQLをコピー</button>
+  </div>
+
+  <div class="step">
+    <h2><span class="num">3</span>ちゃんと動くか確認</h2>
+    <p style="font-size:12.5px;color:var(--ink2)">RUNしたら、下のボタンで接続テスト。緑になれば完成です。</p>
+    <button class="btn-test" id="testBtn" onclick="runTest()">接続テストする</button>
+    <div class="result" id="result"></div>
+  </div>
+
+<script>
+const SB_URL='https://inrvprlyobghviklulcv.supabase.co';
+const SB_KEY='sb_publishable_ZrCNcsRHMci-l7Fns8QtIA_X22XZGJp';
+function copySql(){
+  const t=document.getElementById('sql').innerText;
+  navigator.clipboard.writeText(t).then(()=>{
+    const b=document.querySelector('.btn-copy');b.textContent='コピーしました ✓';setTimeout(()=>b.textContent='SQLをコピー',1800);
+  });
+}
+async function runTest(){
+  const btn=document.getElementById('testBtn');const box=document.getElementById('result');
+  btn.disabled=true;btn.textContent='確認中…';box.className='result';
+  const H={'apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Content-Type':'application/json','Prefer':'return=representation'};
+  try{
+    // insert
+    const ins=await fetch(SB_URL+'/rest/v1/hokkaido_notes',{method:'POST',headers:H,body:JSON.stringify({device_id:'__setup_test__',display_name:'setup',mission_id:'__test__',feeling:'ok',body:'setup test'})});
+    if(!ins.ok){throw new Error('書き込み失敗 ('+ins.status+') '+(await ins.text()));}
+    const row=(await ins.json())[0];
+    // select
+    const sel=await fetch(SB_URL+'/rest/v1/hokkaido_notes?device_id=eq.__setup_test__&select=id',{headers:H});
+    const rows=await sel.json();
+    // cleanup
+    await fetch(SB_URL+'/rest/v1/hokkaido_notes?device_id=eq.__setup_test__',{method:'DELETE',headers:H});
+    box.className='result show ok';
+    box.innerHTML='<b>✓ 準備完了！</b>共有ウォールが使えるようになりました。しおりページを開いて、投稿してみてください。';
+  }catch(e){
+    box.className='result show err';
+    box.innerHTML='<b>まだ準備できていません</b>'+String(e.message||e)+'<br><br>→ ステップ2のSQLを貼って <b>RUN</b> したか、もう一度ご確認ください。';
+  }
+  btn.disabled=false;btn.textContent='もう一度テスト';
+}
+</script>
+</body>
+</html>
