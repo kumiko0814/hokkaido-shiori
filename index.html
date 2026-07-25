@@ -260,6 +260,14 @@
   .judge-toggle.on{border-color:var(--pink-soft);color:var(--pink-deep);background:var(--pink-tint)}
   .judge-fixed{margin-top:16px;text-align:center;background:var(--pink-tint);border:1px solid var(--pink-soft);border-radius:100px;padding:11px;font-size:12.5px;color:var(--pink-deep);font-weight:600}
   .judge-fixed b{font-family:var(--serif);font-size:15px}
+  .vote-locked{text-align:center;padding:14px 8px 6px}
+  .vote-locked .lk{width:52px;height:52px;margin:0 auto 14px;border-radius:16px;background:var(--blue-tint);color:var(--blue-deep);display:flex;align-items:center;justify-content:center}
+  .vote-locked .lk svg{width:26px;height:26px}
+  .vote-locked h4{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--navy);letter-spacing:.04em}
+  .vote-locked h4 b{color:var(--pink-deep)}
+  .vote-locked p{font-size:13px;line-height:1.9;color:var(--ink-2);margin-top:10px}
+  .vote-reset{margin-top:16px;width:100%;background:none;border:1px dashed var(--pink-soft);border-radius:100px;padding:11px;font-family:var(--sans);font-size:12px;color:var(--pink-deep);cursor:pointer}
+  .vote-reset:active{background:var(--pink-tint)}
 
   /* ===== My Note / Wall shared ===== */
   .page-head{padding:34px 0 8px;text-align:center}
@@ -516,7 +524,7 @@
         <div class="score-row"><span class="who">他チームのメンバー<small>おひとり1ポイント</small></span><span class="pt">各1<small>pt</small></span></div>
         <div class="score-total">みんなの票を合わせて、満点 <b>18</b> ポイント</div>
       </div>
-      <p style="text-align:center;font-size:12.5px;color:var(--ink-2);margin-top:14px;line-height:1.9">下の〔投票する〕から、その場で投票できます。<br>森川・清水は3pt、ほかのみなさんは1pt。集計はリアルタイムで反映されます。</p>
+      <p style="text-align:center;font-size:12.5px;color:var(--ink-2);margin-top:14px;line-height:1.9">投票は <b style="color:var(--pink-deep)">15:15</b> から、下の〔投票する〕でスタートします。<br>森川・清水は3pt、ほかのみなさんは1pt。集計はリアルタイムで反映されます。</p>
 
       <div class="bt-note">作戦会議のアイデアは、下の〔マイノート〕にどんどん書き出せます。<br><b>まず自分の頭で考えて、AIwith壁打ちで発想を広げる</b>——いつもの流れで、勝ちにいきましょう。</div>
 
@@ -724,6 +732,8 @@ const FEELINGS=['ときめいた ♡','なるほど','売れそう','おいし�
 const REACTS=[['heart','わかる'],['clap','いいね'],['smile','すてき'],['idea','まねしたい']];
 const TEAMS=[{k:'rie',name:'チームりえ',cls:'pink'},{k:'hika',name:'チームひか',cls:'blue'},{k:'shun',name:'チームしゅん',cls:'gold'}];
 const VOTE_MID='__vote__';
+const VOTE_OPEN_AT=new Date('2026-07-25T15:15:00+09:00').getTime();
+function votingOpen(){return Date.now()>=VOTE_OPEN_AT;}
 const MISS=Object.fromEntries(MISSIONS.map(m=>[m.id,m]));
 
 /* =================== STATE =================== */
@@ -954,6 +964,15 @@ function renderVote(){
     box.innerHTML=`<div class="empty-state warn" style="margin-top:0"><div class="big" style="color:#d9b26a">❏</div><p><b>投票はまだ準備中です</b><br>共有ウォールの初回設定（1回だけ）が済むと、その場で投票できます。</p></div>`;
     return;
   }
+  if(!votingOpen()){
+    box.innerHTML=`<div class="vote-wrap"><div class="vote-locked">
+      <div class="lk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></div>
+      <h4>投票は <b>15:15</b> から</h4>
+      <p>結果発表にあわせて、いまは投票をお休み中です。<br>時間になったら、このページから投票できます。</p>
+    </div>${isNameJudge()?`<button class="vote-reset" onclick="resetAllVotes()">運営用：投票を全部リセット</button>`:''}</div>`;
+    if(!window._voteTimer){window._voteTimer=setTimeout(()=>{window._voteTimer=null;renderVote();},Math.max(1000,Math.min(VOTE_OPEN_AT-Date.now()+800,2147483000)));}
+    return;
+  }
   const w=myWeight(); const isJudge=LS.getItem('hk_role')==='judge'; const myVote=LS.getItem('hk_vote');
   const tally={}; TEAMS.forEach(t=>tally[t.k]=0); let total=0;
   VOTES.forEach(v=>{const p=Number(v.feeling)||0; if(tally[v.choice]!=null){tally[v.choice]+=p; total+=p;}});
@@ -969,12 +988,14 @@ function renderVote(){
       ${TEAMS.map(t=>`<div class="vrow"><span class="vn">${esc(t.name)}</span><div class="vbar ${t.cls}"><i style="width:${Math.round(tally[t.k]/max*100)}%"></i></div><span class="vp">${tally[t.k]}</span></div>`).join('')}
     </div>
     ${isNameJudge()
-      ? `<div class="judge-fixed">「${esc(ME.name)}」名義のため、持ち点は自動で <b>3pt</b> です</div>`
+      ? `<div class="judge-fixed">「${esc(ME.name)}」名義のため、持ち点は自動で <b>3pt</b> です</div>
+         <button class="vote-reset" onclick="resetAllVotes()">運営用：投票を全部リセット（本番前のやり直し用）</button>`
       : `<button class="judge-toggle ${isJudge?'on':''}" onclick="toggleJudge()">${isJudge?'森川・清水モード（3pt）を解除':'森川・清水の方はこちら → 持ち点を3ptに'}</button>`}
   </div>`;
 }
 async function castVote(team){
   if(!WALL_READY){toast('投票は準備中です');return;}
+  if(!votingOpen()){toast('投票は15:15から始まります');return;}
   if(!ME.name){document.getElementById('onb').classList.add('show');return;}
   const w=myWeight();
   LS.setItem('hk_vote',team);
@@ -991,7 +1012,14 @@ function toggleJudge(){
   const now=LS.getItem('hk_role')==='judge';
   if(now)LS.removeItem('hk_role'); else LS.setItem('hk_role','judge');
   const mv=LS.getItem('hk_vote');
-  if(mv&&WALL_READY&&ME.name){castVote(mv);} else {renderVote();toast(now?'持ち点を1ptに戻しました':'持ち点を3ptにしました');}
+  if(mv&&WALL_READY&&ME.name&&votingOpen()){castVote(mv);} else {renderVote();toast(now?'持ち点を1ptに戻しました':'持ち点を3ptにしました');}
+}
+async function resetAllVotes(){
+  if(!isNameJudge()){toast('この操作は運営（くみこ・しみしょ）のみ');return;}
+  if(!confirm('すべての投票を 0 にリセットします。よろしいですか？'))return;
+  VOTES=[]; LS.removeItem('hk_vote'); renderVote();
+  try{await fetch(SB_URL+`/rest/v1/hokkaido_notes?mission_id=eq.${VOTE_MID}`,{method:'DELETE',headers:SB_H});toast('投票を全部リセットしました');}
+  catch(e){toast('リセットできませんでした。電波を確認してね');}
 }
 
 /* =================== RENDER: MY NOTE =================== */
