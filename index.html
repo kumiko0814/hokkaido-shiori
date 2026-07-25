@@ -541,7 +541,7 @@
         <div class="score-row"><span class="who">他チームのメンバー<small>おひとり1ポイント</small></span><span class="pt">各1<small>pt</small></span></div>
         <div class="score-total">みんなの票を合わせて、満点 <b>18</b> ポイント</div>
       </div>
-      <p style="text-align:center;font-size:12.5px;color:var(--ink-2);margin-top:14px;line-height:1.9">投票は <b style="color:var(--pink-deep)">15:15</b> から、下の〔投票する〕でスタートします。<br>森川・清水は3pt、ほかのみなさんは1pt。集計はリアルタイムで反映されます。</p>
+      <p style="text-align:center;font-size:12.5px;color:var(--ink-2);margin-top:14px;line-height:1.9">下の〔投票する〕から、いま投票できます。<br>森川・清水は3pt、ほかのみなさんは1pt。集計はリアルタイムで反映されます。</p>
 
       <div class="bt-note">作戦会議のアイデアは、下の〔マイノート〕にどんどん書き出せます。<br><b>まず自分の頭で考えて、AIwith壁打ちで発想を広げる</b>——いつもの流れで、勝ちにいきましょう。</div>
 
@@ -750,7 +750,7 @@ const REACTS=[['heart','わかる'],['clap','いいね'],['smile','すてき'],[
 const TEAMS=[{k:'rie',name:'チームりえ',cls:'pink'},{k:'hika',name:'チームひか',cls:'blue'},{k:'shun',name:'チームしゅん',cls:'gold'}];
 const VOTE_MID='__vote__';
 const ENTRY_MID='__entry__';
-const VOTE_OPEN_AT=new Date('2026-07-25T15:15:00+09:00').getTime();
+const VOTE_OPEN_AT=new Date('2026-07-25T00:00:00+09:00').getTime();
 function votingOpen(){return Date.now()>=VOTE_OPEN_AT;}
 const MISS=Object.fromEntries(MISSIONS.map(m=>[m.id,m]));
 
