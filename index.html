@@ -275,6 +275,12 @@
   .vrow .vbar.blue i{background:linear-gradient(90deg,var(--blue-soft),var(--blue))}
   .vrow .vbar.gold i{background:linear-gradient(90deg,#e6cf9e,#c79a53)}
   .vrow .vp{flex:0 0 auto;font-family:var(--serif);font-weight:700;font-size:16px;color:var(--navy);min-width:26px;text-align:right}
+  .voters{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 15px 98px}
+  .voters span{font-size:10.5px;color:var(--navy-2);background:var(--cream);border:1px solid var(--line);border-radius:100px;padding:3px 9px;line-height:1.5}
+  .voters span.j{background:var(--pink-tint);border-color:var(--pink-soft);color:var(--pink-deep);font-weight:600}
+  .voters span.j b{font-family:var(--latin);font-size:9px}
+  .voters .vempty{background:transparent;border:none;color:var(--ink-3);padding-left:0}
+  @media(max-width:560px){.voters{margin-left:0}}
   .judge-toggle{margin-top:16px;width:100%;background:none;border:1px dashed var(--line);border-radius:100px;padding:11px;font-family:var(--sans);font-size:12px;color:var(--ink-2);cursor:pointer}
   .judge-toggle:active{background:var(--cream)}
   .judge-toggle.on{border-color:var(--pink-soft);color:var(--pink-deep);background:var(--pink-tint)}
@@ -1061,8 +1067,9 @@ function renderVote(){
     return;
   }
   const w=myWeight(); const isJudge=LS.getItem('hk_role')==='judge'; const myVote=LS.getItem('hk_vote');
-  const tally={}; TEAMS.forEach(t=>tally[t.k]=0); let total=0;
-  VOTES.forEach(v=>{const p=Number(v.feeling)||0; if(tally[v.choice]!=null){tally[v.choice]+=p; total+=p;}});
+  const vBy={}; VOTES.slice().sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).forEach(v=>{vBy[v.device_id]=v;});
+  const tally={}, voters={}; TEAMS.forEach(t=>{tally[t.k]=0;voters[t.k]=[];}); let total=0;
+  Object.values(vBy).forEach(v=>{const p=Number(v.feeling)||0; if(tally[v.choice]!=null){tally[v.choice]+=p; total+=p; voters[v.choice].push({name:v.display_name||'ゲスト',pt:p});}});
   const max=Math.max(1,...TEAMS.map(t=>tally[t.k]));
   box.innerHTML=`<div class="vote-wrap">
     <div class="vote-top"><span>あなたの持ち点</span><b>${w}<small>pt</small></b></div>
@@ -1072,7 +1079,8 @@ function renderVote(){
     </div>
     <div class="vote-results">
       <div class="vr-h">途中経過<span>合計 ${total}pt</span></div>
-      ${TEAMS.map(t=>`<div class="vrow"><span class="vn">${esc(t.name)}</span><div class="vbar ${t.cls}"><i style="width:${Math.round(tally[t.k]/max*100)}%"></i></div><span class="vp">${tally[t.k]}</span></div>`).join('')}
+      ${TEAMS.map(t=>`<div class="vrow"><span class="vn">${esc(t.name)}</span><div class="vbar ${t.cls}"><i style="width:${Math.round(tally[t.k]/max*100)}%"></i></div><span class="vp">${tally[t.k]}</span></div>
+      <div class="voters">${voters[t.k].length?voters[t.k].map(v=>`<span class="${v.pt>=3?'j':''}">${esc(v.name)}${v.pt>=3?' <b>3pt</b>':''}</span>`).join(''):'<span class="vempty">まだいません</span>'}</div>`).join('')}
     </div>
     ${isNameJudge()
       ? `<div class="judge-fixed">「${esc(ME.name)}」名義のため、持ち点は自動で <b>3pt</b> です</div>
