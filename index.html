@@ -185,6 +185,51 @@
   #closing .divider{width:58px;height:2px;margin:30px auto;border-radius:2px;background:linear-gradient(90deg,var(--pink),var(--blue))}
   #closing .from{font-family:var(--serif);font-weight:600;color:var(--navy-2);letter-spacing:.06em;font-size:14px}
 
+  /* ===== Team Battle ===== */
+  .today-banner{display:block;margin:0 auto;max-width:716px;text-decoration:none}
+  .today-banner .inner{margin:14px 22px 0;background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:16px;padding:15px 20px;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow)}
+  .today-banner .pulse{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:var(--pink-soft);box-shadow:0 0 0 0 rgba(244,185,207,.7);animation:pulse 2s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(244,185,207,.6)}70%{box-shadow:0 0 0 10px rgba(244,185,207,0)}100%{box-shadow:0 0 0 0 rgba(244,185,207,0)}}
+  .today-banner .tx{flex:1}
+  .today-banner .tx b{display:block;font-size:14px;font-weight:700;letter-spacing:.02em}
+  .today-banner .tx span{font-size:11.5px;color:rgba(255,255,255,.72)}
+  .today-banner .arw{font-family:var(--latin);color:var(--pink-soft);font-size:18px}
+  #battle{background:radial-gradient(circle at 12% 8%, rgba(224,121,158,.16), transparent 42%),radial-gradient(circle at 88% 12%, rgba(91,150,201,.16), transparent 42%),var(--cream)}
+  .bt-concept{background:linear-gradient(135deg,var(--navy),var(--navy-2));color:#fff;border-radius:22px;padding:34px 28px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .bt-concept::before{content:"";position:absolute;top:-50px;right:-40px;width:170px;height:170px;background:radial-gradient(circle,rgba(224,121,158,.4),transparent 68%);border-radius:50%}
+  .bt-concept .eyebrow{color:var(--pink-soft);display:block;margin-bottom:14px}
+  .bt-concept h3{font-family:var(--serif);font-weight:800;font-size:clamp(21px,5vw,28px);letter-spacing:.04em;line-height:1.5;position:relative}
+  .bt-concept h3 em{font-style:normal;color:var(--pink-soft)}
+  .bt-concept p{font-size:14px;line-height:2.1;color:rgba(255,255,255,.85);margin-top:16px;position:relative}
+  .bt-concept p b{color:#fff;font-weight:700}
+  .bt-lb{text-align:center;font-family:var(--latin);font-size:11px;font-weight:600;letter-spacing:.28em;color:var(--ink-3);text-transform:uppercase;margin:34px 0 16px}
+  .bt-teams{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .team-card{border-radius:18px;padding:22px 12px;text-align:center;color:#fff;box-shadow:var(--shadow-s);position:relative;overflow:hidden}
+  .team-card.pink{background:linear-gradient(160deg,var(--pink),var(--pink-deep))}
+  .team-card.blue{background:linear-gradient(160deg,var(--blue),var(--blue-deep))}
+  .team-card.gold{background:linear-gradient(160deg,#d7a95c,#bf8b3d)}
+  .team-card .tno{font-family:var(--latin);font-size:9.5px;font-weight:600;letter-spacing:.24em;opacity:.8}
+  .team-card h4{font-family:var(--serif);font-weight:700;font-size:16px;margin-top:6px;letter-spacing:.03em;line-height:1.4}
+  .team-card h4 em{font-style:normal;display:block;font-size:23px;margin-top:2px}
+  .bt-time{background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px 20px;box-shadow:var(--shadow-s)}
+  .bt-time .row{display:flex;gap:16px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line-2)}
+  .bt-time .row:last-child{border-bottom:none}
+  .bt-time .row .t{flex:0 0 96px;font-family:var(--latin);font-weight:700;font-size:12.5px;color:var(--pink-deep);letter-spacing:.02em}
+  .bt-time .row .a{font-size:13.5px;color:var(--navy-2);font-weight:500}
+  .bt-time .row.hl .a{font-weight:700;color:var(--navy)}
+  .bt-time .row.fin .t{color:var(--gold)}
+  .bt-time .row.fin .a{color:var(--gold);font-weight:700}
+  .bt-score{background:#fff;border:1px solid var(--line);border-radius:18px;padding:8px 20px 20px;box-shadow:var(--shadow-s)}
+  .score-row{display:flex;justify-content:space-between;align-items:center;padding:15px 0;border-bottom:1px solid var(--line-2)}
+  .score-row .who{font-size:14px;font-weight:600;color:var(--navy-2)}
+  .score-row .who small{display:block;font-size:11px;font-weight:400;color:var(--ink-3);letter-spacing:.02em}
+  .score-row .pt{font-family:var(--serif);font-weight:700;font-size:24px;color:var(--pink-deep)}
+  .score-row .pt small{font-family:var(--sans);font-size:12px;color:var(--ink-2);margin-left:2px}
+  .score-total{margin-top:16px;text-align:center;background:linear-gradient(135deg,var(--pink-tint),var(--blue-tint));border-radius:14px;padding:16px;font-size:14px;color:var(--navy-2);font-weight:600}
+  .score-total b{font-family:var(--serif);font-size:30px;color:var(--navy);margin:0 4px}
+  .bt-note{margin-top:22px;background:var(--blue-tint);border:1px solid var(--blue-soft);border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.85;color:var(--navy-2);text-align:center}
+  .bt-note b{color:var(--blue-deep)}
+
   /* ===== My Note / Wall shared ===== */
   .page-head{padding:34px 0 8px;text-align:center}
   .page-head .eyebrow{display:block;margin-bottom:10px}
@@ -321,11 +366,20 @@
     <p class="hi">下の <b>ミッション</b> と <b>マイノート</b> で、旅に参加できます。</p>
   </header>
 
+  <a class="today-banner" href="#battle">
+    <div class="inner">
+      <span class="pulse"></span>
+      <span class="tx"><b>本日のメインイベント｜出店プレゼン対抗戦</b><span>14:00〜 ビアガーデンで。チームで“出店アイデア”を競います</span></span>
+      <span class="arw">&rarr;</span>
+    </div>
+  </a>
+
   <nav class="jump">
     <div class="inner">
       <a href="#letter">はじめに</a>
       <a href="#rules">旅のルール</a>
       <a href="#mission">ミッション</a>
+      <a href="#battle">プレゼン対抗戦</a>
       <a href="#day1">1日目</a>
       <a href="#day2">2日目</a>
       <a href="#info">お金・行き方</a>
@@ -392,6 +446,50 @@
     </div>
   </section>
 
+  <section id="battle">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="eyebrow">Team Battle</span>
+        <h2 class="serif">ビアガーデン<br>出店プレゼン対抗戦</h2>
+        <p>今日のビアガーデンが、舞台です。2日間の“なぜ売れる？”を、ここで解き放ちましょう。</p>
+      </div>
+
+      <div class="bt-concept">
+        <span class="eyebrow">お題</span>
+        <h3 class="serif">もし、このビアガーデンに<br><em>“出店”</em>できるとしたら？</h3>
+        <p>自分たちなら、<b>どんな商品を</b>、<b>どんな売り方で</b>出しますか。<br>チームで頭をひねって、プレゼンで競い合いましょう。<br>——街で見つけた“選ばれる理由”の、集大成です。</p>
+      </div>
+
+      <div class="bt-lb">3チームに分かれます</div>
+      <div class="bt-teams">
+        <div class="team-card pink"><span class="tno">TEAM</span><h4>チーム<em>りえ</em></h4></div>
+        <div class="team-card blue"><span class="tno">TEAM</span><h4>チーム<em>ひか</em></h4></div>
+        <div class="team-card gold"><span class="tno">TEAM</span><h4>チーム<em>しゅん</em></h4></div>
+      </div>
+
+      <div class="bt-lb">タイムライン</div>
+      <div class="bt-time">
+        <div class="row"><span class="t">14:00 – 14:30</span><span class="a">まずは乾杯、飲む</span></div>
+        <div class="row"><span class="t">14:30 – 14:35</span><span class="a">ルール説明</span></div>
+        <div class="row hl"><span class="t">14:35 – 14:55</span><span class="a">チーム作戦会議</span></div>
+        <div class="row hl"><span class="t">14:55 – 15:10</span><span class="a">プレゼン（3チーム）</span></div>
+        <div class="row"><span class="t">15:10 – 15:15</span><span class="a">採点タイム</span></div>
+        <div class="row"><span class="t">15:15 – 15:20</span><span class="a">結果発表＆コメント</span></div>
+        <div class="row fin"><span class="t">15:20 〜</span><span class="a">このまま、乾杯を継続して！</span></div>
+      </div>
+
+      <div class="bt-lb">評価方法</div>
+      <div class="bt-score">
+        <div class="score-row"><span class="who">森川くみこ</span><span class="pt">3<small>pt</small></span></div>
+        <div class="score-row"><span class="who">清水 翔</span><span class="pt">3<small>pt</small></span></div>
+        <div class="score-row"><span class="who">他チームのメンバー<small>おひとり1ポイント</small></span><span class="pt">各1<small>pt</small></span></div>
+        <div class="score-total">みんなの票を合わせて、満点 <b>18</b> ポイント</div>
+      </div>
+
+      <div class="bt-note">作戦会議のアイデアは、下の〔マイノート〕にどんどん書き出せます。<br><b>まず自分の頭で考えて、AIwith壁打ちで発想を広げる</b>——いつもの流れで、勝ちにいきましょう。</div>
+    </div>
+  </section>
+
   <section id="day1">
     <div class="wrap">
       <div class="center"><div class="day-badge"><span class="d serif">7月24日（金）</span><span class="n">DAY 1</span></div></div>
@@ -449,9 +547,10 @@
             <div class="rows"><div class="r"><span class="lb">場所</span><span>大通公園 5丁目 会場（大通西5）</span></div><div class="r"><span class="lb">お支払い</span><span><b>キャッシュレス決済のみ</b>（当日ご案内）</span></div><div class="r"><span class="lb">MAP</span><span><a href="https://www.sapporo.travel/summerfes/event/odori05/" target="_blank" rel="noopener">大通ビアガーデン &rarr;</a></span></div></div>
           </div>
         </div>
-        <div class="stop blue"><span class="dot"></span><div class="time">14:00 &ndash; 15:40 講座＆シェア</div>
-          <div class="card"><div class="top"><h3>森川・清水の講座 ／ みんなでシェア</h3></div>
-            <p class="desc">この2日間で見つけた“売れる理由”を、ひとことずつシェアしましょう。街で感じたことと、私たちの考え方を重ねて、明日から使える「自分だけの気づき」に変えていく時間です。</p>
+        <div class="stop blue"><span class="dot"></span><div class="time">14:00 &ndash; 15:20 プレゼン対抗戦</div>
+          <div class="card"><div class="top"><h3>チーム対抗・出店プレゼン</h3></div>
+            <p class="desc">この2日間で見つけた“売れる理由”の集大成。3チームに分かれて「自分たちならこう出店する」を考え、プレゼンで競います。街の学びと、私たちの考え方を、ここで解き放ちましょう。</p>
+            <div class="rows"><div class="r"><span class="lb">詳しく</span><span><a href="#battle">出店プレゼン対抗戦のページへ &rarr;</a></span></div></div>
             <div class="eye" style="background:linear-gradient(135deg,var(--pink-tint),var(--blue-tint))"><b>MISSION 05</b>：森川・清水の“目”を借りて、自分の言葉に言い換える。</div>
           </div>
         </div>
