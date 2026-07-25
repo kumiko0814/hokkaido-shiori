@@ -258,6 +258,8 @@
   .judge-toggle{margin-top:16px;width:100%;background:none;border:1px dashed var(--line);border-radius:100px;padding:11px;font-family:var(--sans);font-size:12px;color:var(--ink-2);cursor:pointer}
   .judge-toggle:active{background:var(--cream)}
   .judge-toggle.on{border-color:var(--pink-soft);color:var(--pink-deep);background:var(--pink-tint)}
+  .judge-fixed{margin-top:16px;text-align:center;background:var(--pink-tint);border:1px solid var(--pink-soft);border-radius:100px;padding:11px;font-size:12.5px;color:var(--pink-deep);font-weight:600}
+  .judge-fixed b{font-family:var(--serif);font-size:15px}
 
   /* ===== My Note / Wall shared ===== */
   .page-head{padding:34px 0 8px;text-align:center}
@@ -943,7 +945,9 @@ function renderWall(){
 }
 
 /* =================== VOTING =================== */
-function myWeight(){return LS.getItem('hk_role')==='judge'?3:1;}
+const JUDGE_NAMES=['くみこ','しみしょ'];
+function isNameJudge(){return JUDGE_NAMES.includes((ME.name||'').trim());}
+function myWeight(){return (isNameJudge()||LS.getItem('hk_role')==='judge')?3:1;}
 function renderVote(){
   const box=document.getElementById('voteBox'); if(!box)return;
   if(!WALL_READY){
@@ -964,7 +968,9 @@ function renderVote(){
       <div class="vr-h">途中経過<span>合計 ${total}pt</span></div>
       ${TEAMS.map(t=>`<div class="vrow"><span class="vn">${esc(t.name)}</span><div class="vbar ${t.cls}"><i style="width:${Math.round(tally[t.k]/max*100)}%"></i></div><span class="vp">${tally[t.k]}</span></div>`).join('')}
     </div>
-    <button class="judge-toggle ${isJudge?'on':''}" onclick="toggleJudge()">${isJudge?'森川・清水モード（3pt）を解除':'森川・清水の方はこちら → 持ち点を3ptに'}</button>
+    ${isNameJudge()
+      ? `<div class="judge-fixed">「${esc(ME.name)}」名義のため、持ち点は自動で <b>3pt</b> です</div>`
+      : `<button class="judge-toggle ${isJudge?'on':''}" onclick="toggleJudge()">${isJudge?'森川・清水モード（3pt）を解除':'森川・清水の方はこちら → 持ち点を3ptに'}</button>`}
   </div>`;
 }
 async function castVote(team){
