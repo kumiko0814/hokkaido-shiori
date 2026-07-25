@@ -229,6 +229,35 @@
   .score-total b{font-family:var(--serif);font-size:30px;color:var(--navy);margin:0 4px}
   .bt-note{margin-top:22px;background:var(--blue-tint);border:1px solid var(--blue-soft);border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.85;color:var(--navy-2);text-align:center}
   .bt-note b{color:var(--blue-deep)}
+  .vote-wrap{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px 20px;box-shadow:var(--shadow-s)}
+  .vote-top{display:flex;justify-content:space-between;align-items:center;background:var(--navy);color:#fff;border-radius:12px;padding:12px 18px}
+  .vote-top span{font-size:12.5px;color:rgba(255,255,255,.82)}
+  .vote-top b{font-family:var(--serif);font-size:22px}
+  .vote-top b small{font-family:var(--sans);font-size:12px;margin-left:2px;color:var(--pink-soft)}
+  .vote-q{text-align:center;font-size:14px;font-weight:600;color:var(--navy-2);margin:18px 0 14px}
+  .vote-q span{display:block;font-size:11.5px;font-weight:400;color:var(--ink-3);margin-top:6px;line-height:1.6}
+  .vote-opts{display:grid;gap:10px}
+  .vote-opt{font-family:var(--serif);font-weight:700;font-size:16px;color:#fff;border:none;border-radius:14px;padding:16px;cursor:pointer;transition:.2s;opacity:.92}
+  .vote-opt.pink{background:linear-gradient(135deg,var(--pink),var(--pink-deep))}
+  .vote-opt.blue{background:linear-gradient(135deg,var(--blue),var(--blue-deep))}
+  .vote-opt.gold{background:linear-gradient(135deg,#d7a95c,#bf8b3d)}
+  .vote-opt.on{opacity:1;box-shadow:0 0 0 3px #fff,0 0 0 6px rgba(46,52,72,.28)}
+  .vote-opt .chk{font-family:var(--sans);font-size:14px}
+  .vote-opt:active{transform:scale(.98)}
+  .vote-results{margin-top:22px;border-top:1px dashed var(--line);padding-top:16px}
+  .vr-h{display:flex;justify-content:space-between;font-size:12px;font-weight:700;color:var(--navy-2);margin-bottom:14px}
+  .vr-h span{color:var(--ink-3);font-weight:500}
+  .vrow{display:flex;align-items:center;gap:10px;margin-bottom:11px}
+  .vrow .vn{flex:0 0 88px;font-size:12px;color:var(--navy-2);font-weight:600}
+  .vrow .vbar{flex:1;height:13px;background:var(--line-2);border-radius:8px;overflow:hidden}
+  .vrow .vbar i{display:block;height:100%;border-radius:8px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+  .vrow .vbar.pink i{background:linear-gradient(90deg,var(--pink-soft),var(--pink))}
+  .vrow .vbar.blue i{background:linear-gradient(90deg,var(--blue-soft),var(--blue))}
+  .vrow .vbar.gold i{background:linear-gradient(90deg,#e6cf9e,#c79a53)}
+  .vrow .vp{flex:0 0 auto;font-family:var(--serif);font-weight:700;font-size:16px;color:var(--navy);min-width:26px;text-align:right}
+  .judge-toggle{margin-top:16px;width:100%;background:none;border:1px dashed var(--line);border-radius:100px;padding:11px;font-family:var(--sans);font-size:12px;color:var(--ink-2);cursor:pointer}
+  .judge-toggle:active{background:var(--cream)}
+  .judge-toggle.on{border-color:var(--pink-soft);color:var(--pink-deep);background:var(--pink-tint)}
 
   /* ===== My Note / Wall shared ===== */
   .page-head{padding:34px 0 8px;text-align:center}
@@ -485,8 +514,12 @@
         <div class="score-row"><span class="who">他チームのメンバー<small>おひとり1ポイント</small></span><span class="pt">各1<small>pt</small></span></div>
         <div class="score-total">みんなの票を合わせて、満点 <b>18</b> ポイント</div>
       </div>
+      <p style="text-align:center;font-size:12.5px;color:var(--ink-2);margin-top:14px;line-height:1.9">下の〔投票する〕から、その場で投票できます。<br>森川・清水は3pt、ほかのみなさんは1pt。集計はリアルタイムで反映されます。</p>
 
       <div class="bt-note">作戦会議のアイデアは、下の〔マイノート〕にどんどん書き出せます。<br><b>まず自分の頭で考えて、AIwith壁打ちで発想を広げる</b>——いつもの流れで、勝ちにいきましょう。</div>
+
+      <div class="bt-lb">投票する</div>
+      <div id="voteBox"></div>
     </div>
   </section>
 
@@ -687,12 +720,15 @@ const MISSIONS=[
 ];
 const FEELINGS=['ときめいた ♡','なるほど','売れそう','おいしい','ひらめいた'];
 const REACTS=[['heart','わかる'],['clap','いいね'],['smile','すてき'],['idea','まねしたい']];
+const TEAMS=[{k:'rie',name:'チームりえ',cls:'pink'},{k:'hika',name:'チームひか',cls:'blue'},{k:'shun',name:'チームしゅん',cls:'gold'}];
+const VOTE_MID='__vote__';
 const MISS=Object.fromEntries(MISSIONS.map(m=>[m.id,m]));
 
 /* =================== STATE =================== */
 let ME={id:null,name:null};
 let WALL_READY=true;          // false when table missing
-let NOTES=[];                  // all remote+local notes
+let NOTES=[];                  // all remote+local notes (excludes votes)
+let VOTES=[];                  // vote rows (mission_id === VOTE_MID)
 let REACTIONS=[];              // reaction rows
 let curMission=null, curFeel=null, curChoice=null;
 let wallFilter='all';
@@ -834,24 +870,26 @@ async function syncQueue(){
 async function loadWall(){
   try{
     const r=await fetch(SB_URL+'/rest/v1/hokkaido_notes?select=*&order=created_at.desc&limit=300',{headers:SB_H});
-    if(r.status===404){WALL_READY=false;renderWall();return;}
+    if(r.status===404){WALL_READY=false;renderWall();renderVote();return;}
     if(!r.ok)return;
     WALL_READY=true;
     if(queueLocal().length)syncQueue();
     const remote=await r.json();
+    const remoteNotes=remote.filter(n=>n.mission_id!==VOTE_MID);
+    VOTES=remote.filter(n=>n.mission_id===VOTE_MID);
     // recover my own memos from server (in case local storage was lost)
     const localMine=myNotesLocal(); const localIds=new Set(localMine.map(n=>n.id));
-    const serverMine=remote.filter(n=>n.device_id===ME.id&&!localIds.has(n.id));
+    const serverMine=remoteNotes.filter(n=>n.device_id===ME.id&&!localIds.has(n.id));
     if(serverMine.length){saveMyNotesLocal([...serverMine,...localMine].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at)));renderMe();}
     // merge local-only notes not yet on server
-    const ids=new Set(remote.map(n=>n.id));
+    const ids=new Set(remoteNotes.map(n=>n.id));
     const localExtra=myNotesLocal().filter(n=>!ids.has(n.id));
-    NOTES=[...localExtra,...remote].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
+    NOTES=[...localExtra,...remoteNotes].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
     const rr=await fetch(SB_URL+'/rest/v1/hokkaido_reactions?select=*',{headers:SB_H});
     REACTIONS=rr.ok?await rr.json():[];
-    renderMissions();renderWall();
+    renderMissions();renderWall();renderVote();
     const badge=document.getElementById('wallBadge');
-    if(!document.getElementById('view-wall').classList.contains('active')&&remote.length){badge.textContent=remote.length>99?'99+':remote.length;}
+    if(!document.getElementById('view-wall').classList.contains('active')&&remoteNotes.length){badge.textContent=remoteNotes.length>99?'99+':remoteNotes.length;}
   }catch(e){/* offline: keep local */}
 }
 
@@ -904,6 +942,52 @@ function renderWall(){
   list.innerHTML=arr.map(n=>noteHTML(n,true)).join('');
 }
 
+/* =================== VOTING =================== */
+function myWeight(){return LS.getItem('hk_role')==='judge'?3:1;}
+function renderVote(){
+  const box=document.getElementById('voteBox'); if(!box)return;
+  if(!WALL_READY){
+    box.innerHTML=`<div class="empty-state warn" style="margin-top:0"><div class="big" style="color:#d9b26a">❏</div><p><b>投票はまだ準備中です</b><br>共有ウォールの初回設定（1回だけ）が済むと、その場で投票できます。</p></div>`;
+    return;
+  }
+  const w=myWeight(); const isJudge=LS.getItem('hk_role')==='judge'; const myVote=LS.getItem('hk_vote');
+  const tally={}; TEAMS.forEach(t=>tally[t.k]=0); let total=0;
+  VOTES.forEach(v=>{const p=Number(v.feeling)||0; if(tally[v.choice]!=null){tally[v.choice]+=p; total+=p;}});
+  const max=Math.max(1,...TEAMS.map(t=>tally[t.k]));
+  box.innerHTML=`<div class="vote-wrap">
+    <div class="vote-top"><span>あなたの持ち点</span><b>${w}<small>pt</small></b></div>
+    <p class="vote-q">どのチームに、票を入れますか？<br><span>自分以外のチームに投票しましょう。あとから変更もできます。</span></p>
+    <div class="vote-opts">
+      ${TEAMS.map(t=>`<button class="vote-opt ${t.cls} ${myVote===t.k?'on':''}" onclick="castVote('${t.k}')">${esc(t.name)}${myVote===t.k?' <span class="chk">✓ 投票中</span>':''}</button>`).join('')}
+    </div>
+    <div class="vote-results">
+      <div class="vr-h">途中経過<span>合計 ${total}pt</span></div>
+      ${TEAMS.map(t=>`<div class="vrow"><span class="vn">${esc(t.name)}</span><div class="vbar ${t.cls}"><i style="width:${Math.round(tally[t.k]/max*100)}%"></i></div><span class="vp">${tally[t.k]}</span></div>`).join('')}
+    </div>
+    <button class="judge-toggle ${isJudge?'on':''}" onclick="toggleJudge()">${isJudge?'森川・清水モード（3pt）を解除':'森川・清水の方はこちら → 持ち点を3ptに'}</button>
+  </div>`;
+}
+async function castVote(team){
+  if(!WALL_READY){toast('投票は準備中です');return;}
+  if(!ME.name){document.getElementById('onb').classList.add('show');return;}
+  const w=myWeight();
+  LS.setItem('hk_vote',team);
+  VOTES=VOTES.filter(v=>v.device_id!==ME.id);
+  const row={id:uuid(),device_id:ME.id,display_name:ME.name,mission_id:VOTE_MID,choice:team,feeling:String(w),body:'',created_at:new Date().toISOString()};
+  VOTES.push(row); renderVote();
+  try{
+    await fetch(SB_URL+`/rest/v1/hokkaido_notes?device_id=eq.${ME.id}&mission_id=eq.${VOTE_MID}`,{method:'DELETE',headers:SB_H});
+    const r=await fetch(SB_URL+'/rest/v1/hokkaido_notes',{method:'POST',headers:{...SB_H,'Prefer':'return=minimal'},body:JSON.stringify(row)});
+    toast(r.ok?'投票しました ♡':'保存できませんでした。電波を確認してね');
+  }catch(e){toast('保存できませんでした。電波を確認してね');}
+}
+function toggleJudge(){
+  const now=LS.getItem('hk_role')==='judge';
+  if(now)LS.removeItem('hk_role'); else LS.setItem('hk_role','judge');
+  const mv=LS.getItem('hk_vote');
+  if(mv&&WALL_READY&&ME.name){castVote(mv);} else {renderVote();toast(now?'持ち点を1ptに戻しました':'持ち点を3ptにしました');}
+}
+
 /* =================== RENDER: MY NOTE =================== */
 function renderMe(){
   document.getElementById('meName').textContent=ME.name||'—';
@@ -923,13 +1007,13 @@ function renderMe(){
   box.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--navy-2);margin:22px 0 4px;letter-spacing:.03em">わたしの記録（${mine.length}）</div>`+mine.map(n=>noteHTML(n,false)).join('');
 }
 
-function renderAll(){renderMissions();renderMe();}
+function renderAll(){renderMissions();renderMe();renderVote();}
 
 /* =================== INIT =================== */
 document.getElementById('nameInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')startApp();});
 document.getElementById('shBody')?.addEventListener('input',refreshSubmit);
 bootIdentity();
-renderMissions(); renderWallFilter();
+renderMissions(); renderWallFilter(); renderVote();
 if(ME.name){renderAll();loadWall();syncQueue();}
 setInterval(()=>{if(document.getElementById('view-wall').classList.contains('active')||true)loadWall();},25000);
 window.addEventListener('online',syncQueue);
