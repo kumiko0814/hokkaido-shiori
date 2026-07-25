@@ -211,6 +211,26 @@
   .team-card .tno{font-family:var(--latin);font-size:9.5px;font-weight:600;letter-spacing:.24em;opacity:.8}
   .team-card h4{font-family:var(--serif);font-weight:700;font-size:16px;margin-top:6px;letter-spacing:.03em;line-height:1.4}
   .team-card h4 em{font-style:normal;display:block;font-size:23px;margin-top:2px}
+  .team-card .tcount{font-family:var(--latin);font-size:11px;font-weight:700;opacity:.92;margin-top:10px}
+  .team-card .tmembers{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px;justify-content:center}
+  .team-card .tmembers span{font-size:10.5px;background:rgba(255,255,255,.24);border-radius:100px;padding:3px 9px;line-height:1.5}
+  .team-card .tmembers .tempty{background:transparent;opacity:.72;font-size:10px}
+  .entry-btn{width:100%;font-family:var(--serif);font-weight:800;font-size:20px;color:#fff;background:linear-gradient(135deg,var(--pink),var(--blue));border:none;border-radius:16px;padding:20px;cursor:pointer;letter-spacing:.08em;box-shadow:var(--shadow);transition:.2s}
+  .entry-btn:active{transform:scale(.98)}
+  .entry-btn:disabled{opacity:.6}
+  .entry-sub{text-align:center;font-size:12px;color:var(--ink-2);margin:12px 4px 4px;line-height:1.85}
+  .entry-note{text-align:center;background:var(--blue-tint);border:1px solid var(--blue-soft);border-radius:14px;padding:16px 18px;font-size:13px;line-height:1.85;color:var(--navy-2)}
+  .entry-note b{color:var(--blue-deep)}
+  .entry-done{text-align:center;border-radius:18px;padding:24px;color:#fff;box-shadow:var(--shadow);animation:pop .4s cubic-bezier(.2,.9,.3,1.2)}
+  @keyframes pop{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+  .entry-done.pink{background:linear-gradient(135deg,var(--pink),var(--pink-deep))}
+  .entry-done.blue{background:linear-gradient(135deg,var(--blue),var(--blue-deep))}
+  .entry-done.gold{background:linear-gradient(135deg,#d7a95c,#bf8b3d)}
+  .entry-done>span{display:block;font-size:12.5px;opacity:.9}
+  .entry-done b{font-family:var(--serif);font-size:30px;display:block;margin:8px 0;letter-spacing:.04em}
+  .entry-done .sub{font-size:12px;opacity:.85}
+  .entry-reset{margin-top:12px;width:100%;background:none;border:1px dashed var(--pink-soft);border-radius:100px;padding:10px;font-family:var(--sans);font-size:12px;color:var(--pink-deep);cursor:pointer}
+  .entry-reset:active{background:var(--pink-tint)}
   .bt-time{background:#fff;border:1px solid var(--line);border-radius:18px;padding:10px 20px;box-shadow:var(--shadow-s)}
   .bt-time .row{display:flex;gap:16px;align-items:center;padding:13px 0;border-bottom:1px solid var(--line-2)}
   .bt-time .row:last-child{border-bottom:none}
@@ -500,11 +520,8 @@
       </div>
 
       <div class="bt-lb">3チームに分かれます</div>
-      <div class="bt-teams">
-        <div class="team-card pink"><span class="tno">TEAM</span><h4>チーム<em>りえ</em></h4></div>
-        <div class="team-card blue"><span class="tno">TEAM</span><h4>チーム<em>ひか</em></h4></div>
-        <div class="team-card gold"><span class="tno">TEAM</span><h4>チーム<em>しゅん</em></h4></div>
-      </div>
+      <div id="entryBox"></div>
+      <div class="bt-teams" id="teamRoster"></div>
 
       <div class="bt-lb">タイムライン</div>
       <div class="bt-time">
@@ -732,6 +749,7 @@ const FEELINGS=['ときめいた ♡','なるほど','売れそう','おいし�
 const REACTS=[['heart','わかる'],['clap','いいね'],['smile','すてき'],['idea','まねしたい']];
 const TEAMS=[{k:'rie',name:'チームりえ',cls:'pink'},{k:'hika',name:'チームひか',cls:'blue'},{k:'shun',name:'チームしゅん',cls:'gold'}];
 const VOTE_MID='__vote__';
+const ENTRY_MID='__entry__';
 const VOTE_OPEN_AT=new Date('2026-07-25T15:15:00+09:00').getTime();
 function votingOpen(){return Date.now()>=VOTE_OPEN_AT;}
 const MISS=Object.fromEntries(MISSIONS.map(m=>[m.id,m]));
@@ -739,8 +757,10 @@ const MISS=Object.fromEntries(MISSIONS.map(m=>[m.id,m]));
 /* =================== STATE =================== */
 let ME={id:null,name:null};
 let WALL_READY=true;          // false when table missing
-let NOTES=[];                  // all remote+local notes (excludes votes)
+let NOTES=[];                  // all remote+local notes (excludes votes/entries)
 let VOTES=[];                  // vote rows (mission_id === VOTE_MID)
+let ENTRIES=[];                // team-entry rows (mission_id === ENTRY_MID)
+let ENTRIES_LOADED=false;      // true after first server fetch of entries
 let REACTIONS=[];              // reaction rows
 let curMission=null, curFeel=null, curChoice=null;
 let wallFilter='all';
@@ -882,13 +902,14 @@ async function syncQueue(){
 async function loadWall(){
   try{
     const r=await fetch(SB_URL+'/rest/v1/hokkaido_notes?select=*&order=created_at.desc&limit=300',{headers:SB_H});
-    if(r.status===404){WALL_READY=false;renderWall();renderVote();return;}
+    if(r.status===404){WALL_READY=false;renderWall();renderVote();renderTeams();return;}
     if(!r.ok)return;
     WALL_READY=true;
     if(queueLocal().length)syncQueue();
     const remote=await r.json();
-    const remoteNotes=remote.filter(n=>n.mission_id!==VOTE_MID);
+    const remoteNotes=remote.filter(n=>n.mission_id!==VOTE_MID&&n.mission_id!==ENTRY_MID);
     VOTES=remote.filter(n=>n.mission_id===VOTE_MID);
+    ENTRIES=remote.filter(n=>n.mission_id===ENTRY_MID); ENTRIES_LOADED=true;
     // recover my own memos from server (in case local storage was lost)
     const localMine=myNotesLocal(); const localIds=new Set(localMine.map(n=>n.id));
     const serverMine=remoteNotes.filter(n=>n.device_id===ME.id&&!localIds.has(n.id));
@@ -899,7 +920,7 @@ async function loadWall(){
     NOTES=[...localExtra,...remoteNotes].sort((a,b)=>new Date(b.created_at)-new Date(a.created_at));
     const rr=await fetch(SB_URL+'/rest/v1/hokkaido_reactions?select=*',{headers:SB_H});
     REACTIONS=rr.ok?await rr.json():[];
-    renderMissions();renderWall();renderVote();
+    renderMissions();renderWall();renderVote();renderTeams();
     const badge=document.getElementById('wallBadge');
     if(!document.getElementById('view-wall').classList.contains('active')&&remoteNotes.length){badge.textContent=remoteNotes.length>99?'99+':remoteNotes.length;}
   }catch(e){/* offline: keep local */}
@@ -954,9 +975,75 @@ function renderWall(){
   list.innerHTML=arr.map(n=>noteHTML(n,true)).join('');
 }
 
-/* =================== VOTING =================== */
+/* =================== TEAM ENTRY =================== */
 const JUDGE_NAMES=['くみこ','しみしょ'];
 function isNameJudge(){return JUDGE_NAMES.includes((ME.name||'').trim());}
+function entriesByDevice(){
+  const byDev={};
+  ENTRIES.slice().sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).forEach(e=>{byDev[e.device_id]=e;});
+  return byDev;
+}
+function teamMembers(){
+  const m={}; TEAMS.forEach(t=>m[t.k]=[]);
+  Object.values(entriesByDevice()).forEach(e=>{ if(m[e.choice]&&!JUDGE_NAMES.includes((e.display_name||'').trim())) m[e.choice].push(e.display_name||'ゲスト'); });
+  return m;
+}
+function myTeamKey(){
+  const mine=Object.values(entriesByDevice()).find(e=>e.device_id===ME.id);
+  if(ENTRIES_LOADED){ if(mine){LS.setItem('hk_team',mine.choice);return mine.choice;} LS.removeItem('hk_team'); return null; }
+  return LS.getItem('hk_team')||(mine?mine.choice:null);
+}
+function renderTeams(){
+  const eb=document.getElementById('entryBox'); const tr=document.getElementById('teamRoster');
+  if(!eb||!tr)return;
+  const m=teamMembers(); const mt=myTeamKey();
+  if(!WALL_READY){
+    eb.innerHTML=`<div class="entry-note">共有の初回設定（1回だけ）が済むと、エントリーできます。</div>`;
+  }else if(isNameJudge()){
+    eb.innerHTML=`<div class="entry-note"><b>審査員</b>（${esc(ME.name)}）なので、チーム分けはありません。<br>みんなのエントリーを見守ってくださいね。</div><button class="entry-reset" onclick="resetEntries()">運営用：チーム分けをリセット</button>`;
+  }else if(mt&&TEAMS.find(t=>t.k===mt)){
+    const t=TEAMS.find(t=>t.k===mt);
+    eb.innerHTML=`<div class="entry-done ${t.cls}"><span>あなたのチームは</span><b>${esc(t.name)}</b><span class="sub">仲間と作戦会議へ！</span></div>`;
+  }else{
+    eb.innerHTML=`<button class="entry-btn" onclick="doEntry()">エントリーする</button><p class="entry-sub">ボタンを押すと、りえ・ひか・しゅん のどれかに、<br>人数が均等になるように振り分けられます。</p>`;
+  }
+  tr.innerHTML=TEAMS.map(t=>`<div class="team-card ${t.cls}"><span class="tno">TEAM</span><h4>チーム<em>${esc(t.name.replace('チーム',''))}</em></h4><div class="tcount">${m[t.k].length}人</div><div class="tmembers">${m[t.k].map(n=>`<span>${esc(n)}</span>`).join('')||'<span class="tempty">まだいません</span>'}</div></div>`).join('');
+}
+async function doEntry(){
+  if(!WALL_READY){toast('エントリーは準備中です');return;}
+  if(!ME.name){document.getElementById('onb').classList.add('show');return;}
+  if(isNameJudge()){toast('審査員はチーム分けなしです');return;}
+  if(myTeamKey()){toast('すでにエントリー済みです');renderTeams();return;}
+  const btn=document.querySelector('.entry-btn'); if(btn){btn.disabled=true;btn.textContent='振り分け中…';}
+  // fetch latest entries to balance accurately
+  let rows=ENTRIES;
+  try{const r=await fetch(SB_URL+`/rest/v1/hokkaido_notes?mission_id=eq.${ENTRY_MID}&select=device_id,display_name,choice,created_at`,{headers:SB_H}); if(r.ok)rows=await r.json();}catch(e){}
+  const byDev={}; rows.slice().sort((a,b)=>new Date(a.created_at)-new Date(b.created_at)).forEach(e=>{byDev[e.device_id]=e;});
+  const cnt={}; TEAMS.forEach(t=>cnt[t.k]=0);
+  Object.values(byDev).forEach(e=>{ if(cnt[e.choice]!=null&&!JUDGE_NAMES.includes((e.display_name||'').trim())&&e.device_id!==ME.id) cnt[e.choice]++; });
+  const min=Math.min(...TEAMS.map(t=>cnt[t.k]));
+  const cand=TEAMS.filter(t=>cnt[t.k]===min).map(t=>t.k);
+  const chosen=cand[Math.floor(Math.random()*cand.length)];
+  const row={id:uuid(),device_id:ME.id,display_name:ME.name,mission_id:ENTRY_MID,choice:chosen,feeling:'',body:'',created_at:new Date().toISOString()};
+  LS.setItem('hk_team',chosen);
+  ENTRIES=Object.values(byDev).filter(e=>e.device_id!==ME.id).concat([row]);
+  try{
+    await fetch(SB_URL+`/rest/v1/hokkaido_notes?device_id=eq.${ME.id}&mission_id=eq.${ENTRY_MID}`,{method:'DELETE',headers:SB_H});
+    await fetch(SB_URL+'/rest/v1/hokkaido_notes',{method:'POST',headers:{...SB_H,'Prefer':'return=minimal'},body:JSON.stringify(row)});
+  }catch(e){}
+  renderTeams();
+  const t=TEAMS.find(x=>x.k===chosen);
+  toast(`${t.name} になりました！`);
+}
+async function resetEntries(){
+  if(!isNameJudge()){toast('この操作は運営（くみこ・しみしょ）のみ');return;}
+  if(!confirm('全員のチーム分けを白紙に戻します。よろしいですか？'))return;
+  ENTRIES=[]; LS.removeItem('hk_team'); renderTeams();
+  try{await fetch(SB_URL+`/rest/v1/hokkaido_notes?mission_id=eq.${ENTRY_MID}`,{method:'DELETE',headers:SB_H});toast('チーム分けをリセットしました');}
+  catch(e){toast('リセットできませんでした。電波を確認してね');}
+}
+
+/* =================== VOTING =================== */
 function myWeight(){return (isNameJudge()||LS.getItem('hk_role')==='judge')?3:1;}
 function renderVote(){
   const box=document.getElementById('voteBox'); if(!box)return;
@@ -1041,13 +1128,13 @@ function renderMe(){
   box.innerHTML=`<div style="font-size:12px;font-weight:700;color:var(--navy-2);margin:22px 0 4px;letter-spacing:.03em">わたしの記録（${mine.length}）</div>`+mine.map(n=>noteHTML(n,false)).join('');
 }
 
-function renderAll(){renderMissions();renderMe();renderVote();}
+function renderAll(){renderMissions();renderMe();renderVote();renderTeams();}
 
 /* =================== INIT =================== */
 document.getElementById('nameInput')?.addEventListener('keydown',e=>{if(e.key==='Enter')startApp();});
 document.getElementById('shBody')?.addEventListener('input',refreshSubmit);
 bootIdentity();
-renderMissions(); renderWallFilter(); renderVote();
+renderMissions(); renderWallFilter(); renderVote(); renderTeams();
 if(ME.name){renderAll();loadWall();syncQueue();}
 setInterval(()=>{if(document.getElementById('view-wall').classList.contains('active')||true)loadWall();},25000);
 window.addEventListener('online',syncQueue);
